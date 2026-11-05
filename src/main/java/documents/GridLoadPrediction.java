@@ -1,6 +1,6 @@
 package documents;
 
-public class GridLoadPrediction extends GridLoad {
+public class GridLoadPrediction extends BaseGridLoad {
 }
 
 
