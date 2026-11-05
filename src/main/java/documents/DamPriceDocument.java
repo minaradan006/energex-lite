@@ -5,7 +5,7 @@ import java.util.List;
 public class DamPriceDocument extends BaseDocument {
     private String currencyUnit;
     private String priceMeasureUnit;
-    private List<Interval> points;
+    private List<DamPriceInterval> points;
 
     public String getCurrencyUnit() {
         return currencyUnit;
@@ -32,23 +32,14 @@ public class DamPriceDocument extends BaseDocument {
     }
 }
 
-class Interval {
-    private int IntervalIndex;
-    private double priceAmount;
+class DamPriceInterval extends Interval {
+    private Double priceAmount;
 
-    public int getIntervalIndex() {
-        return IntervalIndex;
-    }
-
-    public void setIntervalIndex(int intervalIndex) {
-        IntervalIndex = intervalIndex;
-    }
-
-    public double getPriceAmount() {
+    public Double getPriceAmount() {
         return priceAmount;
     }
 
-    public void setPriceAmount(double priceAmount) {
+    public void setPriceAmount(Double priceAmount) {
         if (priceAmount == null) {
             System.out.println("PriceAmount is null; interval skipped.");
             return;

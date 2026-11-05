@@ -2,9 +2,10 @@ package documents;
 
 import java.util.List;
 
-public class DamPricePrediction extends {
+public class DamPricePrediction extends BaseDocument {
     private String currencyUnit;
     private String priceMeasureUnit;
+    private List<DamPredictionInterval> points;
 
     public String getCurrencyUnit() {
         return currencyUnit;
@@ -21,20 +22,19 @@ public class DamPricePrediction extends {
     public void setPriceMeasureUnit(String priceMeasureUnit) {
         this.priceMeasureUnit = priceMeasureUnit;
     }
+
+    public List<DamPredictionInterval> getPoints() {
+        return points;
+    }
+
+    public void setPoints(List<DamPredictionInterval> points) {
+        this.points = points;
+    }
 }
 
-class Interval {
-    private int intervalIndex;
+class DamPredictionInterval extends Interval {
     private double predictedPriceEurMwh;
     private double spikeProbability;
-
-    public int getIntervalIndex() {
-        return intervalIndex;
-    }
-
-    public void setIntervalIndex(int intervalIndex) {
-        this.intervalIndex = intervalIndex;
-    }
 
     public double getPredictedPriceEurMwh() {
         return predictedPriceEurMwh;
