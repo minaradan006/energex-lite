@@ -30,25 +30,25 @@ public class DamPricePrediction extends BaseDocument {
     public void setPoints(List<DamPredictionInterval> points) {
         this.points = points;
     }
-}
 
-class DamPredictionInterval extends Interval {
-    private double predictedPriceEurMwh;
-    private double spikeProbability;
+    public static class DamPredictionInterval extends Interval {
+        private double predictedPriceEurMwh;
+        private double spikeProbability;
 
-    public double getPredictedPriceEurMwh() {
-        return predictedPriceEurMwh;
-    }
+        public double getPredictedPriceEurMwh() {
+            return predictedPriceEurMwh;
+        }
 
-    public void setPredictedPriceEurMwh(double predictedPriceEurMwh) {
-        this.predictedPriceEurMwh = predictedPriceEurMwh;
-    }
+        public void setPredictedPriceEurMwh(double predictedPriceEurMwh) {
+            this.predictedPriceEurMwh = predictedPriceEurMwh;
+        }
 
-    public double getSpikeProbability() {
-        return spikeProbability;
-    }
+        public double getSpikeProbability() {
+            return spikeProbability;
+        }
 
-    public void setSpikeProbability(double spikeProbability) {
-        this.spikeProbability = spikeProbability;
+        public void setSpikeProbability(double spikeProbability) {
+            this.spikeProbability = spikeProbability;
+        }
     }
 }

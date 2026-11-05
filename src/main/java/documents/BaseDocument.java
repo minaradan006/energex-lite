@@ -1,6 +1,6 @@
 package documents;
 
-class BaseDocument {
+public class BaseDocument {
     private String biddingZoneDomain;
     private String periodStart;
     private String periodEnd;
