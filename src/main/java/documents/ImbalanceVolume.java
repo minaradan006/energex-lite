@@ -6,6 +6,18 @@ public class ImbalanceVolume extends BaseDocument {
     private String quantityMeasureUnit;
     private List<ImbalanceVolumeInterval> points;
 
+    @Override
+    public boolean isValid() {
+        for (ImbalanceVolumeInterval point : points) {
+            if (!point.isValid()) {
+                setValidationError(point.getValidationError());
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public String getQuantityMeasureUnit() {
         return quantityMeasureUnit;
     }
@@ -26,21 +38,36 @@ public class ImbalanceVolume extends BaseDocument {
         private Double positiveImbalanceVol;
         private Double negativeImbalanceVol;
 
+        @Override
+        public boolean isValid() {
+            if (positiveImbalanceVol == null) {
+                setValidationError("PositiveImbalanceVol is null; interval skipped.");
+                return false;
+            }
+
+            if (positiveImbalanceVol < 0) {
+                setValidationError(String.format("PositiveImbalanceVol %s is below the minimum allowed value 0; interval skipped.", positiveImbalanceVol));
+                return false;
+            }
+
+            if (negativeImbalanceVol == null) {
+                setValidationError("NegativeImbalanceVol is null; interval skipped.");
+                return false;
+            }
+
+            if (negativeImbalanceVol < 0) {
+                setValidationError(String.format("NegativeImbalanceVol %s is below the minimum allowed value 0; interval skipped.", negativeImbalanceVol));
+                return false;
+            }
+
+            return true;
+        }
+
         public Double getPositiveImbalanceVol() {
             return positiveImbalanceVol;
         }
 
         public void setPositiveImbalanceVol(Double positiveImbalanceVol) {
-            if (positiveImbalanceVol == null) {
-                System.out.println("PositiveImbalanceVol is null; interval skipped.");
-                return;
-            }
-
-            if (positiveImbalanceVol < 0) {
-                System.out.println("PositiveImbalanceVol " + positiveImbalanceVol + " is below the minimum allowed value 0; interval skipped.");
-                return;
-            }
-
             this.positiveImbalanceVol = positiveImbalanceVol;
         }
 
@@ -49,15 +76,6 @@ public class ImbalanceVolume extends BaseDocument {
         }
 
         public void setNegativeImbalanceVol(Double negativeImbalanceVol) {
-            if (negativeImbalanceVol == null) {
-                System.out.println("NegativeImbalanceVol is null; interval skipped.");
-                return;
-            }
-
-            if (negativeImbalanceVol < 0) {
-                System.out.println("NegativeImbalanceVol " + negativeImbalanceVol + " is below the minimum allowed value 0; interval skipped.");
-            }
-
             this.negativeImbalanceVol = negativeImbalanceVol;
         }
     }

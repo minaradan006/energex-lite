@@ -6,6 +6,18 @@ public class ImbalancePrice extends BaseDocument {
     private String currencyUnit;
     private List<ImbalancePriceInterval> points;
 
+    @Override
+    public boolean isValid() {
+        for (ImbalancePriceInterval point : points) {
+            if (!point.isValid()) {
+                setValidationError(point.getValidationError());
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public String getCurrencyUnit() {
         return currencyUnit;
     }
@@ -26,20 +38,36 @@ public class ImbalancePrice extends BaseDocument {
         private Double positiveImbalancePrice;
         private Double negativeImbalancePrice;
 
+        @Override
+        public boolean isValid() {
+            if (positiveImbalancePrice == null) {
+                setValidationError("PositiveImbalancePrice is null; interval skipped.");
+                return false;
+            }
+
+            if (Math.abs(positiveImbalancePrice) > 15000) {
+                setValidationError(String.format("PositiveImbalancePrice %s exceeds the maximum allowed value 15000 EUR/MWh; interval skipped.", positiveImbalancePrice));
+                return false;
+            }
+
+            if (negativeImbalancePrice == null) {
+                setValidationError("NegativeImbalancePrice is null; interval skipped.");
+                return false;
+            }
+
+            if (Math.abs(negativeImbalancePrice) > 15000) {
+                setValidationError(String.format("NegativeImbalancePrice %s exceeds the maximum allowed value 15000 EUR/MWh; interval skipped.", negativeImbalancePrice));
+                return false;
+            }
+
+            return true;
+        }
+
         public Double getPositiveImbalancePrice() {
             return positiveImbalancePrice;
         }
 
         public void setPositiveImbalancePrice(Double positiveImbalancePrice) {
-            if (positiveImbalancePrice == null) {
-                System.out.println("PositiveImbalancePrice is null; interval skipped.");
-                return;
-            }
-
-            if (positiveImbalancePrice > 15000 || positiveImbalancePrice < -15000) {
-                System.out.println("PositiveImbalancePrice " + positiveImbalancePrice +" exceeds the maximum allowed value 15000 EUR/MWh; interval skipped.");
-            }
-
             this.positiveImbalancePrice = positiveImbalancePrice;
         }
 
@@ -48,15 +76,6 @@ public class ImbalancePrice extends BaseDocument {
         }
 
         public void setNegativeImbalancePrice(Double negativeImbalancePrice) {
-            if (negativeImbalancePrice == null) {
-                System.out.println("NegativeImbalancePrice is null; interval skipped.");
-                return;
-            }
-
-            if (negativeImbalancePrice > 15000 || negativeImbalancePrice < -15000) {
-                System.out.println("NegativeImbalancePrice " + negativeImbalancePrice + " exceeds the maximum allowed value 15000 EUR/MWh; interval skipped.");
-            }
-
             this.negativeImbalancePrice = negativeImbalancePrice;
         }
     }

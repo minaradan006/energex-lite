@@ -7,6 +7,18 @@ public class DamPrice extends BaseDocument {
     private String priceMeasureUnit;
     private List<DamPriceInterval> points;
 
+    @Override
+    public boolean isValid() {
+        for (DamPriceInterval point : points) {
+            if (!point.isValid()) {
+                setValidationError(point.getValidationError());
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public String getCurrencyUnit() {
         return currencyUnit;
     }
@@ -34,21 +46,26 @@ public class DamPrice extends BaseDocument {
     public static class DamPriceInterval extends Interval {
         private Double priceAmount;
 
+        @Override
+        public boolean isValid() {
+            if (priceAmount == null) {
+                setValidationError("PriceAmount is null; interval skipped.");
+                return false;
+            }
+
+            if (priceAmount < -500 || priceAmount > 4000) {
+                setValidationError(String.format("PriceAmount %s is outside the market range [-500, 4000] EUR/MWh; interval skipped.", priceAmount));
+                return false;
+            }
+
+            return true;
+        }
+
         public Double getPriceAmount() {
             return priceAmount;
         }
 
         public void setPriceAmount(Double priceAmount) {
-            if (priceAmount == null) {
-                System.out.println("PriceAmount is null; interval skipped.");
-                return;
-            }
-
-            if (priceAmount < -500 || priceAmount > 4000) {
-                System.out.println("PriceAmount " + priceAmount + " is outside the market range [-500, 4000] EUR/MWh; interval skipped.");
-                return;
-            }
-
             this.priceAmount = priceAmount;
         }
     }
