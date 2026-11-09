@@ -12,11 +12,11 @@ import repository.MarketDataRepository;
         visible = true
 )
 @JsonSubTypes({
-        @JsonSubTypes(value = StartImportCommand.class, name = "startImport"),
-        @JsonSubTypes(value = StopImportCommand.class, name = "stopImport"),
-        @JsonSubTypes(value = ImportCommand.class, name = "import"),
-        @JsonSubTypes(value = PatchCommand.class, name = "patch"),
-        @JsonSubTypes(value = GetCommand.class, name = "get")
+        @JsonSubTypes.Type(value = StartImportCommand.class, name = "startImport"),
+        @JsonSubTypes.Type(value = StopImportCommand.class, name = "stopImport"),
+        @JsonSubTypes.Type(value = ImportCommand.class, name = "import"),
+        @JsonSubTypes.Type(value = PatchCommand.class, name = "patch"),
+        @JsonSubTypes.Type(value = GetCommand.class, name = "get")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Command {
