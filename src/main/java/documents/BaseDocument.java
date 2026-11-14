@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import java.util.List;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -20,7 +21,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = ImbalanceVolume.class, name = "IMBALANCE_VOLUME")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class BaseDocument {
+public abstract class BaseDocument {
     private String biddingZoneDomain;
     private String periodStart;
     private String periodEnd;
@@ -72,4 +73,6 @@ public class BaseDocument {
     public void setPeriodEnd(String periodEnd) {
         this.periodEnd = periodEnd;
     }
+
+    public abstract List<? extends Interval> getPoints();
 }
