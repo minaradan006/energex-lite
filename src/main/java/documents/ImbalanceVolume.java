@@ -2,12 +2,24 @@ package documents;
 
 import java.util.List;
 
+/**
+ * Represents Imbalance Volume documents containing quantity measure units
+ * and a list of volume intervals.
+ */
 public class ImbalanceVolume extends BaseDocument {
     private String quantityMeasureUnit;
     private List<ImbalanceVolumeInterval> points;
 
+    /**
+     * Validates the imbalance volume document and all its associated interval points.
+     */
     @Override
-    public boolean isValid() {
+    public final boolean isValid() {
+        if (points == null) {
+            setValidationError("Points list is null.");
+            return false;
+        }
+
         for (ImbalanceVolumeInterval point : points) {
             if (!point.isValid()) {
                 setValidationError(point.getValidationError());
@@ -18,26 +30,45 @@ public class ImbalanceVolume extends BaseDocument {
         return true;
     }
 
-    public String getQuantityMeasureUnit() {
+    /**
+     * Gets the quantity measure unit for the volumes.
+     */
+    public final String getQuantityMeasureUnit() {
         return quantityMeasureUnit;
     }
 
-    public void setQuantityMeasureUnit(String quantityMeasureUnit) {
+    /**
+     * Sets the quantity measure unit for the volumes.
+     */
+    public final void setQuantityMeasureUnit(final String quantityMeasureUnit) {
         this.quantityMeasureUnit = quantityMeasureUnit;
     }
 
-    public List<ImbalanceVolumeInterval> getPoints() {
+    /**
+     * Gets the list of imbalance volume intervals.
+     */
+    public final List<ImbalanceVolumeInterval> getPoints() {
         return points;
     }
 
-    public void setPoints(List<ImbalanceVolumeInterval> points) {
+    /**
+     * Sets the list of imbalance volume intervals.
+     */
+    public final void setPoints(final List<ImbalanceVolumeInterval> points) {
         this.points = points;
     }
 
-    public static class ImbalanceVolumeInterval extends Interval {
+    /**
+     * Represents an individual interval point within an imbalance volume document.
+     */
+    public static final class ImbalanceVolumeInterval extends Interval {
+        private static final double MIN_VOLUME = 0.0;
         private Double positiveImbalanceVol;
         private Double negativeImbalanceVol;
 
+        /**
+         * Validates the positive and negative imbalance volumes against allowed ranges.
+         */
         @Override
         public boolean isValid() {
             if (positiveImbalanceVol == null) {
@@ -45,8 +76,10 @@ public class ImbalanceVolume extends BaseDocument {
                 return false;
             }
 
-            if (positiveImbalanceVol < 0) {
-                setValidationError(String.format("PositiveImbalanceVol %s is below the minimum allowed value 0; interval skipped.", positiveImbalanceVol));
+            if (positiveImbalanceVol < MIN_VOLUME) {
+                setValidationError(String.format(
+                        "PositiveImbalanceVol %s is below the minimum allowed value 0; "
+                                + "interval skipped.", positiveImbalanceVol));
                 return false;
             }
 
@@ -55,27 +88,41 @@ public class ImbalanceVolume extends BaseDocument {
                 return false;
             }
 
-            if (negativeImbalanceVol < 0) {
-                setValidationError(String.format("NegativeImbalanceVol %s is below the minimum allowed value 0; interval skipped.", negativeImbalanceVol));
+            if (negativeImbalanceVol < MIN_VOLUME) {
+                setValidationError(String.format(
+                        "NegativeImbalanceVol %s is below the minimum allowed value 0; "
+                                + "interval skipped.", negativeImbalanceVol));
                 return false;
             }
 
             return true;
         }
 
+        /**
+         * Gets the positive imbalance volume.
+         */
         public Double getPositiveImbalanceVol() {
             return positiveImbalanceVol;
         }
 
-        public void setPositiveImbalanceVol(Double positiveImbalanceVol) {
+        /**
+         * Sets the positive imbalance volume.
+         */
+        public void setPositiveImbalanceVol(final Double positiveImbalanceVol) {
             this.positiveImbalanceVol = positiveImbalanceVol;
         }
 
+        /**
+         * Gets the negative imbalance volume.
+         */
         public Double getNegativeImbalanceVol() {
             return negativeImbalanceVol;
         }
 
-        public void setNegativeImbalanceVol(Double negativeImbalanceVol) {
+        /**
+         * Sets the negative imbalance volume.
+         */
+        public void setNegativeImbalanceVol(final Double negativeImbalanceVol) {
             this.negativeImbalanceVol = negativeImbalanceVol;
         }
     }

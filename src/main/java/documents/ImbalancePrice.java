@@ -2,12 +2,24 @@ package documents;
 
 import java.util.List;
 
+/**
+ * Represents Imbalance Price documents containing currency units
+ * and a list of imbalance price interval points.
+ */
 public class ImbalancePrice extends BaseDocument {
     private String currencyUnit;
     private List<ImbalancePriceInterval> points;
 
+    /**
+     * Validates the imbalance price document and all its associated interval points.
+     */
     @Override
-    public boolean isValid() {
+    public final boolean isValid() {
+        if (points == null) {
+            setValidationError("Points list is null.");
+            return false;
+        }
+
         for (ImbalancePriceInterval point : points) {
             if (!point.isValid()) {
                 setValidationError(point.getValidationError());
@@ -18,26 +30,45 @@ public class ImbalancePrice extends BaseDocument {
         return true;
     }
 
-    public String getCurrencyUnit() {
+    /**
+     * Gets the currency unit.
+     */
+    public final String getCurrencyUnit() {
         return currencyUnit;
     }
 
-    public void setCurrencyUnit(String currencyUnit) {
+    /**
+     * Sets the currency unit.
+     */
+    public final void setCurrencyUnit(final String currencyUnit) {
         this.currencyUnit = currencyUnit;
     }
 
-    public List<ImbalancePriceInterval> getPoints() {
+    /**
+     * Gets the list of imbalance price intervals.
+     */
+    public final List<ImbalancePriceInterval> getPoints() {
         return points;
     }
 
-    public void setPoints(List<ImbalancePriceInterval> points) {
+    /**
+     * Sets the list of imbalance price intervals.
+     */
+    public final void setPoints(final List<ImbalancePriceInterval> points) {
         this.points = points;
     }
 
-    public static class ImbalancePriceInterval extends Interval {
+    /**
+     * Represents an individual interval point within an imbalance price document.
+     */
+    public static final class ImbalancePriceInterval extends Interval {
+        private static final double MAX_ABS_PRICE = 15000.0;
         private Double positiveImbalancePrice;
         private Double negativeImbalancePrice;
 
+        /**
+         * Validates the positive and negative imbalance prices against absolute limits.
+         */
         @Override
         public boolean isValid() {
             if (positiveImbalancePrice == null) {
@@ -45,8 +76,10 @@ public class ImbalancePrice extends BaseDocument {
                 return false;
             }
 
-            if (Math.abs(positiveImbalancePrice) > 15000) {
-                setValidationError(String.format("PositiveImbalancePrice %s exceeds the maximum allowed value 15000 EUR/MWh; interval skipped.", positiveImbalancePrice));
+            if (Math.abs(positiveImbalancePrice) > MAX_ABS_PRICE) {
+                setValidationError(String.format(
+                        "PositiveImbalancePrice %s exceeds the maximum allowed value 15000 "
+                                + "EUR/MWh; interval skipped.", positiveImbalancePrice));
                 return false;
             }
 
@@ -55,27 +88,41 @@ public class ImbalancePrice extends BaseDocument {
                 return false;
             }
 
-            if (Math.abs(negativeImbalancePrice) > 15000) {
-                setValidationError(String.format("NegativeImbalancePrice %s exceeds the maximum allowed value 15000 EUR/MWh; interval skipped.", negativeImbalancePrice));
+            if (Math.abs(negativeImbalancePrice) > MAX_ABS_PRICE) {
+                setValidationError(String.format(
+                        "NegativeImbalancePrice %s exceeds the maximum allowed value 15000 "
+                                + "EUR/MWh; interval skipped.", negativeImbalancePrice));
                 return false;
             }
 
             return true;
         }
 
+        /**
+         * Gets the positive imbalance price.
+         */
         public Double getPositiveImbalancePrice() {
             return positiveImbalancePrice;
         }
 
-        public void setPositiveImbalancePrice(Double positiveImbalancePrice) {
+        /**
+         * Sets the positive imbalance price.
+         */
+        public void setPositiveImbalancePrice(final Double positiveImbalancePrice) {
             this.positiveImbalancePrice = positiveImbalancePrice;
         }
 
+        /**
+         * Gets the negative imbalance price.
+         */
         public Double getNegativeImbalancePrice() {
             return negativeImbalancePrice;
         }
 
-        public void setNegativeImbalancePrice(Double negativeImbalancePrice) {
+        /**
+         * Sets the negative imbalance price.
+         */
+        public void setNegativeImbalancePrice(final Double negativeImbalancePrice) {
             this.negativeImbalancePrice = negativeImbalancePrice;
         }
     }

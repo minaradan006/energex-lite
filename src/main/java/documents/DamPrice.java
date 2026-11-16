@@ -2,13 +2,25 @@ package documents;
 
 import java.util.List;
 
+/**
+ * Represents Day-Ahead Market (DAM) price documents containing currency,
+ * measure units, and a list of price intervals.
+ */
 public class DamPrice extends BaseDocument {
     private String currencyUnit;
     private String priceMeasureUnit;
     private List<DamPriceInterval> points;
 
+    /**
+     * Validates the DAM price document and all its associated interval points.
+     */
     @Override
-    public boolean isValid() {
+    public final boolean isValid() {
+        if (points == null) {
+            setValidationError("Points list is null.");
+            return false;
+        }
+
         for (DamPriceInterval point : points) {
             if (!point.isValid()) {
                 setValidationError(point.getValidationError());
@@ -19,33 +31,59 @@ public class DamPrice extends BaseDocument {
         return true;
     }
 
-    public String getCurrencyUnit() {
+    /**
+     * Gets the currency unit for the prices.
+     */
+    public final String getCurrencyUnit() {
         return currencyUnit;
     }
 
-    public void setCurrencyUnit(String currencyUnit) {
+    /**
+     * Sets the currency unit for the prices.
+     */
+    public final void setCurrencyUnit(final String currencyUnit) {
         this.currencyUnit = currencyUnit;
     }
 
-    public String getPriceMeasureUnit() {
+    /**
+     * Gets the price measure unit.
+     */
+    public final String getPriceMeasureUnit() {
         return priceMeasureUnit;
     }
 
-    public void setPriceMeasureUnit(String priceMeasureUnit) {
+    /**
+     * Sets the price measure unit.
+     */
+    public final void setPriceMeasureUnit(final String priceMeasureUnit) {
         this.priceMeasureUnit = priceMeasureUnit;
     }
 
-    public List<DamPriceInterval> getPoints() {
+    /**
+     * Gets the list of DAM price intervals.
+     */
+    public final List<DamPriceInterval> getPoints() {
         return points;
     }
 
-    public void setPoints(List<DamPriceInterval> points) {
+    /**
+     * Sets the list of DAM price intervals.
+     */
+    public final void setPoints(final List<DamPriceInterval> points) {
         this.points = points;
     }
 
-    public static class DamPriceInterval extends Interval {
+    /**
+     * Represents an individual interval point within a DAM price document.
+     */
+    public static final class DamPriceInterval extends Interval {
+        private static final double MIN_PRICE = -500.0;
+        private static final double MAX_PRICE = 4000.0;
         private Double priceAmount;
 
+        /**
+         * Validates the price amount interval against allowed market ranges.
+         */
         @Override
         public boolean isValid() {
             if (priceAmount == null) {
@@ -53,19 +91,27 @@ public class DamPrice extends BaseDocument {
                 return false;
             }
 
-            if (priceAmount < -500 || priceAmount > 4000) {
-                setValidationError(String.format("PriceAmount %s is outside the market range [-500, 4000] EUR/MWh; interval skipped.", priceAmount));
+            if (priceAmount < MIN_PRICE || priceAmount > MAX_PRICE) {
+                setValidationError(String.format(
+                        "PriceAmount %s is outside the market range [-500, 4000] EUR/MWh; "
+                                + "interval skipped.", priceAmount));
                 return false;
             }
 
             return true;
         }
 
+        /**
+         * Gets the price amount for this interval.
+         */
         public Double getPriceAmount() {
             return priceAmount;
         }
 
-        public void setPriceAmount(Double priceAmount) {
+        /**
+         * Sets the price amount for this interval.
+         */
+        public void setPriceAmount(final Double priceAmount) {
             this.priceAmount = priceAmount;
         }
     }

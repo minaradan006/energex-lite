@@ -2,13 +2,24 @@ package documents;
 
 import java.util.List;
 
+/**
+ * Represents base grid load documents containing quantity measure units
+ * and a list of grid load interval points.
+ */
 public class BaseGridLoad extends BaseDocument {
-    private String currencyUnit;
-    private String priceMeasureUnit;
+    private String quantityMeasureUnit;
     private List<GridLoadInterval> points;
 
+    /**
+     * Validates the grid load document and all its associated interval points.
+     */
     @Override
-    public boolean isValid() {
+    public final boolean isValid() {
+        if (points == null) {
+            setValidationError("Points list is null.");
+            return false;
+        }
+
         for (GridLoadInterval point : points) {
             if (!point.isValid()) {
                 setValidationError(point.getValidationError());
@@ -19,34 +30,45 @@ public class BaseGridLoad extends BaseDocument {
         return true;
     }
 
-    public String getCurrencyUnit() {
-        return currencyUnit;
+    /**
+     * Gets the quantity measure unit.
+     */
+    public final String getQuantityMeasureUnit() {
+        return quantityMeasureUnit;
     }
 
-    public void setCurrencyUnit(String currencyUnit) {
-        this.currencyUnit = currencyUnit;
+    /**
+     * Sets the quantity measure unit.
+     */
+    public final void setQuantityMeasureUnit(final String quantityMeasureUnit) {
+        this.quantityMeasureUnit = quantityMeasureUnit;
     }
 
-    public String getPriceMeasureUnit() {
-        return priceMeasureUnit;
-    }
-
-    public void setPriceMeasureUnit(String priceMeasureUnit) {
-        this.priceMeasureUnit = priceMeasureUnit;
-    }
-
-    public List<GridLoadInterval> getPoints() {
+    /**
+     * Gets the list of grid load intervals.
+     */
+    public final List<GridLoadInterval> getPoints() {
         return points;
     }
 
-    public void setPoints(List<GridLoadInterval> points) {
+    /**
+     * Sets the list of grid load intervals.
+     */
+    public final void setPoints(final List<GridLoadInterval> points) {
         this.points = points;
     }
 
-    public static class GridLoadInterval extends Interval{
-        Double quantity;
-        Double reservesRequiredMW;
+    /**
+     * Represents an individual interval point within a grid load document.
+     */
+    public static final class GridLoadInterval extends Interval {
+        private static final double MIN_QUANTITY = 0.0;
+        private Double quantity;
+        private Double reservesRequiredMW;
 
+        /**
+         * Validates the quantity and required reserves against allowed operational limits.
+         */
         @Override
         public boolean isValid() {
             if (quantity == null) {
@@ -54,8 +76,10 @@ public class BaseGridLoad extends BaseDocument {
                 return false;
             }
 
-            if (quantity < 0) {
-                setValidationError(String.format("Quantity %s is below the minimum allowed value 0; interval skipped.", quantity));
+            if (quantity < MIN_QUANTITY) {
+                setValidationError(String.format(
+                        "Quantity %s is below the minimum allowed value 0; interval skipped.",
+                        quantity));
                 return false;
             }
 
@@ -65,26 +89,41 @@ public class BaseGridLoad extends BaseDocument {
             }
 
             if (reservesRequiredMW <= 0) {
-                setValidationError(String.format("ReservesRequiredMW %s is not positive; interval skipped.", reservesRequiredMW));
+                setValidationError(String.format(
+                        "ReservesRequiredMW %s is not positive; interval skipped.",
+                        reservesRequiredMW));
                 return false;
             }
 
             return true;
         }
 
+        /**
+         * Gets the quantity value.
+         */
         public Double getQuantity() {
             return quantity;
         }
 
-        public void setQuantity(Double quantity) {
+        /**
+         * Sets the quantity value.
+         */
+        public void setQuantity(final Double quantity) {
             this.quantity = quantity;
         }
 
+        /**
+         * Gets the required reserves in MW.
+         */
+        @com.fasterxml.jackson.annotation.JsonIgnore
         public Double getReservesRequiredMW() {
             return reservesRequiredMW;
         }
 
-        public void setReservesRequiredMW(Double reservesRequiredMW) {
+        /**
+         * Sets the required reserves in MW.
+         */
+        public void setReservesRequiredMW(final Double reservesRequiredMW) {
             this.reservesRequiredMW = reservesRequiredMW;
         }
     }
